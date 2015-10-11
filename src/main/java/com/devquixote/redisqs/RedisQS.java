@@ -100,25 +100,21 @@ public class RedisQS implements AmazonSQS {
     }
 
     public void setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest)
-            throws AmazonServiceException, AmazonClientException {
-    }
+            throws AmazonServiceException, AmazonClientException { }
 
     public ChangeMessageVisibilityBatchResult changeMessageVisibilityBatch(
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest)
-                    throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+                    throws AmazonServiceException, AmazonClientException { return null; }
 
     public void changeMessageVisibility(ChangeMessageVisibilityRequest changeMessageVisibilityRequest)
-            throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-    }
+            throws AmazonServiceException, AmazonClientException { }
 
-    public GetQueueUrlResult getQueueUrl(GetQueueUrlRequest getQueueUrlRequest)
+    public GetQueueUrlResult getQueueUrl(GetQueueUrlRequest request)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        String queueUrl = queueUrl(request.getQueueName());
+        GetQueueUrlResult result = new GetQueueUrlResult();
+        result.setQueueUrl(queueUrl);
+        return result;
     }
 
     public void removePermission(RemovePermissionRequest removePermissionRequest)
@@ -243,8 +239,8 @@ public class RedisQS implements AmazonSQS {
     }
 
     public GetQueueUrlResult getQueueUrl(String queueName) throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        GetQueueUrlRequest request = new GetQueueUrlRequest(queueName);
+        return getQueueUrl(request);
     }
 
     public void removePermission(String queueUrl, String label) throws AmazonServiceException, AmazonClientException {

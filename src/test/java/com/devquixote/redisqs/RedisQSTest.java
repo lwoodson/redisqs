@@ -111,4 +111,9 @@ public class RedisQSTest extends Assert {
         ListQueuesResult result = service.listQueues("foos");
         assertEquals(result.getQueueUrls(), new ArrayList<String>());
     }
+    
+    @Test
+    public void ensureGetQueueUrlReturnsProperUrl() {
+        assertEquals(service.getQueueUrl(queueName).getQueueUrl(), queueUrl);
+    }
 }
