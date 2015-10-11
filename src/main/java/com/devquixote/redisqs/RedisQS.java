@@ -212,6 +212,7 @@ public class RedisQS implements AmazonSQS {
     public void setQueueAttributes(String queueUrl, Map<String, String> attributes)
             throws AmazonServiceException, AmazonClientException {
         // TODO Auto-generated method stub
+    }
 
     public ChangeMessageVisibilityBatchResult changeMessageVisibilityBatch(String queueUrl,
             List<ChangeMessageVisibilityBatchRequestEntry> entries)
