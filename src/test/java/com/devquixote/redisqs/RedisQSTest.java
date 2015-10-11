@@ -84,14 +84,30 @@ public class RedisQSTest extends Assert {
         assertEquals(service.receiveMessage(queueUrl).getMessages().get(0).getBody(), "two");
         assertEquals(service.receiveMessage(queueUrl).getMessages().get(0).getBody(), "three");
     }
-    
+
+    @Test
+    public void ensureReceiveMessageCanReceiveBatch() {
+        service.sendMessage(queueUrl, "one");
+        service.sendMessage(queueUrl, "two");
+        service.sendMessage(queueUrl, "three");
+
+        ReceiveMessageRequest request = new ReceiveMessageRequest(queueUrl);
+        request.setMaxNumberOfMessages(5);
+        ReceiveMessageResult result = service.receiveMessage(request);
+        List<String> msgBodies = new ArrayList<String>();
+        for (Message message : result.getMessages()) {
+            msgBodies.add(message.getBody());
+        }
+        assertEquals(msgBodies, Arrays.asList("one", "two", "three"));
+    }
+
     @Test
     public void ensureListQueuesReturnsAllQueuesForEmptyPattern() {
         service.sendMessage(queueUrl, "one");
         ListQueuesResult result = service.listQueues("");
         assertEquals(result.getQueueUrls(), Arrays.asList(queueUrl));
     }
-   
+
     @Test
     public void ensureListQueuesReturnsAllQueuesForSplatPattern() {
         service.sendMessage(queueUrl, "one");

@@ -4,7 +4,6 @@ import static com.devquixote.redisqs.SqsReferenceOps.queueUrl;
 import static com.devquixote.redisqs.SqsReferenceOps.setRegionEndpoint;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -181,11 +180,22 @@ public class RedisQS implements AmazonSQS {
 
     public ReceiveMessageResult receiveMessage(ReceiveMessageRequest request)
             throws AmazonServiceException, AmazonClientException {
-        String body = jedis.lpop(keyFor(request.getQueueUrl()));
-        Message message = new Message();
-        message.setBody(body);
         ReceiveMessageResult result = new ReceiveMessageResult();
-        result.setMessages(Arrays.asList(message));
+        List<Message> messages = new ArrayList<Message>();
+
+        if (request.getMaxNumberOfMessages() == null || request.getMaxNumberOfMessages() < 1)
+                request.setMaxNumberOfMessages(1);
+
+        for (int i = 0; i < request.getMaxNumberOfMessages(); i++) {
+            String body = jedis.lpop(keyFor(request.getQueueUrl()));
+            if (body == null)
+                break;
+            Message message = new Message();
+            message.setBody(body);
+            messages.add(message);
+        }
+
+        result.setMessages(messages);
         return result;
     }
 
