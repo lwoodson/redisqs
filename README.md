@@ -1,2 +1,2 @@
 # redisqs
-Amazon SQS client backed by redis for local/offline development
+Amazon SQS java client backed by redis for local/offline development.
