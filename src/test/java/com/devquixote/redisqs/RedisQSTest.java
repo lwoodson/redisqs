@@ -116,4 +116,12 @@ public class RedisQSTest extends Assert {
     public void ensureGetQueueUrlReturnsProperUrl() {
         assertEquals(service.getQueueUrl(queueName).getQueueUrl(), queueUrl);
     }
+    
+    @Test
+    public void ensureDeleteQueueDeletesAQueue() {
+        service.sendMessage(queueUrl, "one");
+        assertTrue(jedis.exists(queueKey));
+        service.deleteQueue(queueUrl);
+        assertFalse(jedis.exists(queueKey));
+    }
 }

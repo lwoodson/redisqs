@@ -145,7 +145,7 @@ public class RedisQS implements AmazonSQS {
 
     public void deleteQueue(DeleteQueueRequest deleteQueueRequest)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
+        jedis.del(keyFor(deleteQueueRequest.getQueueUrl()));
     }
 
     public SendMessageResult sendMessage(SendMessageRequest request)
@@ -261,8 +261,7 @@ public class RedisQS implements AmazonSQS {
     }
 
     public void deleteQueue(String queueUrl) throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-
+        deleteQueue(new DeleteQueueRequest(queueUrl));
     }
 
     public SendMessageResult sendMessage(String queueUrl, String messageBody)
