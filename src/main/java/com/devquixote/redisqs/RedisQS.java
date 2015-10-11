@@ -44,6 +44,7 @@ import com.amazonaws.services.sqs.model.RemovePermissionRequest;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequest;
 import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
 import com.amazonaws.services.sqs.model.SendMessageBatchResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchResultEntry;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
@@ -140,10 +141,18 @@ public class RedisQS implements AmazonSQS {
         return result;
     }
 
-    public SendMessageBatchResult sendMessageBatch(SendMessageBatchRequest sendMessageBatchRequest)
+    public SendMessageBatchResult sendMessageBatch(SendMessageBatchRequest request)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        SendMessageBatchResult result = new SendMessageBatchResult();
+        result.setSuccessful(new ArrayList<SendMessageBatchResultEntry>());
+
+        for (SendMessageBatchRequestEntry entry : request.getEntries()) {
+            sendMessage(request.getQueueUrl(), entry.getMessageBody());
+            SendMessageBatchResultEntry successfulEntry = new SendMessageBatchResultEntry();
+            result.getSuccessful().add(successfulEntry);
+        }
+
+        return result;
     }
 
     public void purgeQueue(PurgeQueueRequest purgeQueueRequest) throws AmazonServiceException, AmazonClientException {
@@ -260,7 +269,8 @@ public class RedisQS implements AmazonSQS {
     public SendMessageBatchResult sendMessageBatch(String queueUrl, List<SendMessageBatchRequestEntry> entries)
             throws AmazonServiceException, AmazonClientException {
         // TODO Auto-generated method stub
-        return null;
+        SendMessageBatchRequest request = new SendMessageBatchRequest(queueUrl, entries);
+        return sendMessageBatch(request);
     }
 
     public void deleteQueue(String queueUrl) throws AmazonServiceException, AmazonClientException {

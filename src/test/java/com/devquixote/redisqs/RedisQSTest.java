@@ -3,6 +3,7 @@ package com.devquixote.redisqs;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.testng.Assert;
@@ -15,6 +16,7 @@ import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
+import com.amazonaws.services.sqs.model.SendMessageBatchRequestEntry;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 
@@ -157,5 +159,16 @@ public class RedisQSTest extends Assert {
         service.sendMessage(queueUrl, "one");
         GetQueueAttributesResult result = service.getQueueAttributes(queueUrl, Arrays.asList("ApproximateNumberOfMessages"));
         assertEquals(Long.parseLong(result.getAttributes().get("ApproximateNumberOfMessages")), 2);
+    }
+
+    @Test
+    public void sendMessageBatchEnqueuesAllMessagesInTheBatch() {
+        List<SendMessageBatchRequestEntry> batchEntries = Arrays.asList(
+                new SendMessageBatchRequestEntry("1", messageBody),
+                new SendMessageBatchRequestEntry("2", messageBody),
+                new SendMessageBatchRequestEntry("3", messageBody)
+        );
+        service.sendMessageBatch(queueUrl, batchEntries);
+        assertEquals(jedis.llen(queueKey), new Long(3));
     }
 }
