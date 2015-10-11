@@ -7,7 +7,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
@@ -40,8 +39,7 @@ public class RedisQSTest extends Assert {
 
     @Test
     public void ensureCreateQueueReturnsProperQueueResultWithQueueURL() {
-        CreateQueueRequest request = new CreateQueueRequest(queueName);
-        CreateQueueResult result = service.createQueue(request);
+        CreateQueueResult result = service.createQueue(queueName);
         assertEquals(result.getQueueUrl(), queueUrl);
     }
 

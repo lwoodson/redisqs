@@ -287,28 +287,19 @@ public class RedisQS implements AmazonSQS {
     }
 
     public CreateQueueResult createQueue(String queueName) throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        CreateQueueRequest request = new CreateQueueRequest(queueName);
+        return createQueue(request);
     }
 
     public void addPermission(String queueUrl, String label, List<String> aWSAccountIds, List<String> actions)
-            throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-    }
+            throws AmazonServiceException, AmazonClientException { }
 
     public void deleteMessage(String queueUrl, String receiptHandle)
-            throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-    }
+            throws AmazonServiceException, AmazonClientException { }
 
-    public void shutdown() {
-        // TODO Auto-generated method stub
-    }
+    public void shutdown() { }
 
-    public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    public ResponseMetadata getCachedResponseMetadata(AmazonWebServiceRequest request) { return null; }
 
     private String keyFor(String url) {
         return "sqs:" + url;
