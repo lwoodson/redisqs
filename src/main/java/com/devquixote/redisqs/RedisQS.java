@@ -5,6 +5,7 @@ import static com.devquixote.redisqs.SqsReferenceOps.setRegionEndpoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,8 +100,10 @@ public class RedisQS implements AmazonSQS {
         setRegionEndpoint(region.getName());
     }
 
-    public void setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest)
-            throws AmazonServiceException, AmazonClientException { }
+    public void setQueueAttributes(SetQueueAttributesRequest request)
+            throws AmazonServiceException, AmazonClientException {
+        jedis.hmset(attributesKeyFor(request.getQueueUrl()), request.getAttributes());
+    }
 
     public ChangeMessageVisibilityBatchResult changeMessageVisibilityBatch(
             ChangeMessageVisibilityBatchRequest changeMessageVisibilityBatchRequest)
@@ -120,10 +123,21 @@ public class RedisQS implements AmazonSQS {
     public void removePermission(RemovePermissionRequest removePermissionRequest)
             throws AmazonServiceException, AmazonClientException {}
 
-    public GetQueueAttributesResult getQueueAttributes(GetQueueAttributesRequest getQueueAttributesRequest)
+    public GetQueueAttributesResult getQueueAttributes(GetQueueAttributesRequest request)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, String> rawAttributes = jedis.hgetAll(attributesKeyFor(request.getQueueUrl()));
+        Map<String, String> attributes = new HashMap<String, String>();
+        GetQueueAttributesResult result = new GetQueueAttributesResult();
+
+        for (String attribute : request.getAttributeNames()) {
+            attributes.put(attribute, rawAttributes.get(attribute));
+        }
+
+        Long queueSize = jedis.llen(keyFor(request.getQueueUrl()));
+        attributes.put("ApproximateNumberOfMessages", queueSize.toString());
+
+        result.setAttributes(attributes);
+        return result;
     }
 
     public SendMessageBatchResult sendMessageBatch(SendMessageBatchRequest sendMessageBatchRequest)
@@ -207,14 +221,10 @@ public class RedisQS implements AmazonSQS {
     }
 
     public void addPermission(AddPermissionRequest addPermissionRequest)
-            throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-    }
+            throws AmazonServiceException, AmazonClientException { }
 
     public void deleteMessage(DeleteMessageRequest deleteMessageRequest)
-            throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-    }
+            throws AmazonServiceException, AmazonClientException { }
 
     public ListQueuesResult listQueues() throws AmazonServiceException, AmazonClientException {
         return listQueues("*");
@@ -222,36 +232,29 @@ public class RedisQS implements AmazonSQS {
 
     public void setQueueAttributes(String queueUrl, Map<String, String> attributes)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
+        setQueueAttributes(new SetQueueAttributesRequest(queueUrl, attributes));
     }
 
     public ChangeMessageVisibilityBatchResult changeMessageVisibilityBatch(String queueUrl,
             List<ChangeMessageVisibilityBatchRequestEntry> entries)
                     throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public void changeMessageVisibility(String queueUrl, String receiptHandle, Integer visibilityTimeout)
-            throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-
-    }
+            throws AmazonServiceException, AmazonClientException { }
 
     public GetQueueUrlResult getQueueUrl(String queueName) throws AmazonServiceException, AmazonClientException {
         GetQueueUrlRequest request = new GetQueueUrlRequest(queueName);
         return getQueueUrl(request);
     }
 
-    public void removePermission(String queueUrl, String label) throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-
-    }
+    public void removePermission(String queueUrl, String label) throws AmazonServiceException, AmazonClientException { }
 
     public GetQueueAttributesResult getQueueAttributes(String queueUrl, List<String> attributeNames)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        GetQueueAttributesRequest request = new GetQueueAttributesRequest(queueUrl, attributeNames);
+        return getQueueAttributes(request);
     }
 
     public SendMessageBatchResult sendMessageBatch(String queueUrl, List<SendMessageBatchRequestEntry> entries)
@@ -303,5 +306,9 @@ public class RedisQS implements AmazonSQS {
 
     private String keyFor(String url) {
         return "sqs:" + url;
+    }
+
+    private String attributesKeyFor(String url) {
+        return keyFor(url) + ":attributes";
     }
 }

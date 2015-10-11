@@ -2,12 +2,15 @@ package com.devquixote.redisqs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.amazonaws.services.sqs.model.CreateQueueResult;
+import com.amazonaws.services.sqs.model.GetQueueAttributesResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
@@ -23,7 +26,9 @@ public class RedisQSTest extends Assert {
     private String queueName;
     private String queueUrl;
     private String queueKey;
+    private String queueAttributesKey;
     private String messageBody;
+    private Map<String, String> attributes;
 
     @BeforeMethod
     public void setUp() {
@@ -32,7 +37,10 @@ public class RedisQSTest extends Assert {
         this.queueName = "testQueue";
         this.queueUrl = "https://us-east-1/queue.amazonaws.com/123456789123/" + queueName;
         this.queueKey = "sqs:" + queueUrl;
+        this.queueAttributesKey = this.queueKey + ":attributes";
         this.messageBody = "{'data': 'test'}";
+        attributes = new HashMap<String, String>();
+        attributes.put("foo", "bar");
 
         jedis.flushDB();
     }
@@ -121,5 +129,33 @@ public class RedisQSTest extends Assert {
         assertTrue(jedis.exists(queueKey));
         service.deleteQueue(queueUrl);
         assertFalse(jedis.exists(queueKey));
+    }
+
+    @Test
+    public void ensureSetQueueAttributesPersistsAttributesInRedisHash() {
+        service.setQueueAttributes(queueUrl, attributes);
+        assertEquals(jedis.hget(queueAttributesKey, "foo"), "bar");
+    }
+
+    @Test
+    public void ensureGetAttributesContainsSpecifiedAttributes() {
+        service.setQueueAttributes(queueUrl, attributes);
+        GetQueueAttributesResult result = service.getQueueAttributes(queueUrl, Arrays.asList("foo"));
+        assertEquals(result.getAttributes().get("foo"), "bar");
+    }
+
+    @Test
+    public void ensureGetAttributesDoesNotContainNotSpecifiedAttributes() {
+        service.setQueueAttributes(queueUrl, attributes);
+        GetQueueAttributesResult result = service.getQueueAttributes(queueUrl, Arrays.asList("bar"));
+        assertEquals(result.getAttributes().get("foo"), null);
+    }
+
+    @Test
+    public void ensureGetAttributesContainsApproximateNumberOfMessages() {
+        service.sendMessage(queueUrl, "one");
+        service.sendMessage(queueUrl, "one");
+        GetQueueAttributesResult result = service.getQueueAttributes(queueUrl, Arrays.asList("ApproximateNumberOfMessages"));
+        assertEquals(Long.parseLong(result.getAttributes().get("ApproximateNumberOfMessages")), 2);
     }
 }
