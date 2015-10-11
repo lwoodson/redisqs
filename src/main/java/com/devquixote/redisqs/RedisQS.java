@@ -3,9 +3,11 @@ package com.devquixote.redisqs;
 import static com.devquixote.redisqs.SqsReferenceOps.queueUrl;
 import static com.devquixote.redisqs.SqsReferenceOps.setRegionEndpoint;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -99,7 +101,6 @@ public class RedisQS implements AmazonSQS {
 
     public void setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
     }
 
     public ChangeMessageVisibilityBatchResult changeMessageVisibilityBatch(
@@ -171,8 +172,23 @@ public class RedisQS implements AmazonSQS {
 
     public ListQueuesResult listQueues(ListQueuesRequest listQueuesRequest)
             throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        String queueNamePrefix = listQueuesRequest.getQueueNamePrefix();
+
+        if (queueNamePrefix == null || queueNamePrefix.equals("")) {
+            queueNamePrefix = "*";
+        } else if (!queueNamePrefix.endsWith("*")) {
+            queueNamePrefix = queueNamePrefix + "*";
+        }
+
+        Set<String> redisNames = jedis.keys(keyFor(queueUrl(queueNamePrefix)));
+        
+        ListQueuesResult result = new ListQueuesResult();
+        List<String> queueUrls = new ArrayList<String>();
+        for (String redisName : redisNames) {
+            queueUrls.add(redisName.split(":", 2)[1]);
+        }
+        result.setQueueUrls(queueUrls);
+        return result;
     }
 
     public DeleteMessageBatchResult deleteMessageBatch(DeleteMessageBatchRequest deleteMessageBatchRequest)
@@ -205,8 +221,7 @@ public class RedisQS implements AmazonSQS {
     }
 
     public ListQueuesResult listQueues() throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        return listQueues("*");
     }
 
     public void setQueueAttributes(String queueUrl, Map<String, String> attributes)
@@ -266,8 +281,8 @@ public class RedisQS implements AmazonSQS {
     }
 
     public ListQueuesResult listQueues(String queueNamePrefix) throws AmazonServiceException, AmazonClientException {
-        // TODO Auto-generated method stub
-        return null;
+        ListQueuesRequest request = new ListQueuesRequest(queueNamePrefix);
+        return listQueues(request);
     }
 
     public DeleteMessageBatchResult deleteMessageBatch(String queueUrl, List<DeleteMessageBatchRequestEntry> entries)
