@@ -1,3 +1,5 @@
+![build status](https://api.travis-ci.org/lwoodson/redisqs.svg?branch=master)
+
 # redisqs
 [Amazon SQS java client](http://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/services/sqs/AmazonSQS.html)
 backed by [Redis](http://redis.io/) for non-cloud deployments, offline
