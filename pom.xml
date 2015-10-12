@@ -3,6 +3,39 @@
   <groupId>com.devquixote</groupId>
   <artifactId>redisqs</artifactId>
   <version>0.0.1-SNAPSHOT</version>
+  <name>RedisQS</name>
+  <description>
+    Redis-backed implementation of AmazonSQS client to allow for offline/local development and testing.
+  </description>
+  <url>https://github.com/lwoodson/redisqs</url>
+  
+  <licenses>
+    <license>
+      <name>Apache License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
+  <scm>
+    <url>https://github.com/lwoodson/redisqs</url>
+    <connection>scm:git:git://github.com/lwoodson/redisqs.git</connection>
+    <developerConnection>scm:git:git@github.com:lwoodson/redisqs.git</developerConnection>
+  </scm>
+  
+  <issueManagement>
+    <url>https://github.com/lwoodson/redisqs/issues</url>
+    <system>Github Issues</system>
+  </issueManagement>
+  
+  <developers>
+    <developer>
+      <name>Lance Woodson</name>
+      <email>lance@webmaneuvers.com</email>
+      <organization>devquixote.com</organization>
+      <organizationUrl>devquixote.com</organizationUrl>
+    </developer>
+  </developers>
 
   <properties>
     <log4j.version>2.4</log4j.version>
