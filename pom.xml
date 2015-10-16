@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.devquixote</groupId>
   <artifactId>redisqs</artifactId>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
   <name>RedisQS</name>
   <description>
     Redis-backed implementation of AmazonSQS client to allow for offline/local development and testing.
@@ -21,7 +21,7 @@
     <url>https://github.com/lwoodson/redisqs</url>
     <connection>scm:git:git://github.com/lwoodson/redisqs.git</connection>
     <developerConnection>scm:git:git@github.com:lwoodson/redisqs.git</developerConnection>
-    <tag>redisqs-0.0.1</tag>
+    <tag>HEAD</tag>
   </scm>
 
   <issueManagement>
