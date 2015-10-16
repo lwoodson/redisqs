@@ -6,6 +6,8 @@ backed by [Redis](http://redis.io/) for non-cloud deployments, offline
 development, CI pipelines, etc...
 
 ## Basic Usage
+You need redis installed and running.
+
 ```java
 AmazonSQS sqs = new RedisQS("localhost", 6379, 1);
 String queueUrl = sqs.createQueue("testQueue").getQueueUrl();
