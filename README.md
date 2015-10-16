@@ -19,6 +19,17 @@ The intent is for RedisQS to mimic the behavior of the Amazon Java SDK's
 AmazonSQS implementation as closely as possible.  Refer to the SDK's javadocs
 and the tests here for more information.
 
+## Getting
+Include the following in your pom:
+
+```xml
+<dependency>
+  <groupId>com.devquixote</groupId>
+  <artifactId>redisqs</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
+
 ## Contributing
 1. Fork it
 2. Hack it
