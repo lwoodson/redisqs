@@ -6,7 +6,7 @@ backed by [Redis](http://redis.io/) for non-cloud deployments, offline
 development, CI pipelines, etc...
 
 ## Basic Usage
-You need redis installed and running and include the following in your pom:
+You need to have redis server running and include the following in your pom:
 
 ```xml
 <dependency>
@@ -16,7 +16,7 @@ You need redis installed and running and include the following in your pom:
 </dependency>
 ```
 
-Then use RedisQS as you would AmazonSQS in your application.
+Then use ```RedisQS``` as you would ```AmazonSQS``` in your application.
 
 ```java
 AmazonSQS sqs = new RedisQS("localhost", 6379, 1);
@@ -28,8 +28,9 @@ assert result.getMessages().get(0).getBody().equals("test message");
 ```
 
 The intent is for RedisQS to mimic the behavior of the Amazon Java SDK's
-AmazonSQS implementation as closely as possible.  Refer to the SDK's javadocs
-and the tests here for more information.
+AmazonSQS implementation as closely as possible.  Not every feature is 
+implemented, however.  Refer to the SDK's javadocs and the tests here
+for more information.
 
 ## Getting
 
