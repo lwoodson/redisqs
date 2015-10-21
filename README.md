@@ -6,7 +6,17 @@ backed by [Redis](http://redis.io/) for non-cloud deployments, offline
 development, CI pipelines, etc...
 
 ## Basic Usage
-You need redis installed and running.
+You need redis installed and running and include the following in your pom:
+
+```xml
+<dependency>
+  <groupId>com.devquixote</groupId>
+  <artifactId>redisqs</artifactId>
+  <version>0.0.1</version>
+</dependency>
+```
+
+Then use RedisQS as you would AmazonSQS in your application.
 
 ```java
 AmazonSQS sqs = new RedisQS("localhost", 6379, 1);
@@ -22,15 +32,7 @@ AmazonSQS implementation as closely as possible.  Refer to the SDK's javadocs
 and the tests here for more information.
 
 ## Getting
-Include the following in your pom:
 
-```xml
-<dependency>
-  <groupId>com.devquixote</groupId>
-  <artifactId>redisqs</artifactId>
-  <version>0.0.1</version>
-</dependency>
-```
 
 ## Contributing
 1. Fork it
